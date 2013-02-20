@@ -22,6 +22,7 @@ import sickbeard
 import generic
 
 from sickbeard import common
+from sickbeard import helpers
 from sickbeard import logger
 from sickbeard import tvcache
 
@@ -44,7 +45,7 @@ class FreshOnTvCache(tvcache.TVCache):
     def __init__(self, provider):
         tvcache.TVCache.__init__(self, provider)
 
-        # only poll TvTorrents every 15 minutes max
+        # only poll FreshOnTv every 15 minutes max
         self.minTime = 15
 
     def _getRSSData(self):
@@ -60,8 +61,8 @@ class FreshOnTvCache(tvcache.TVCache):
         return self.provider.getURL(url)
 
     def _parseItem(self, item):
-        title = item.findtext('title')
-        url = item.findtext('link')
+        title = helpers.get_xml_text(item.getElementsByTagName('title')[0])
+        url = helpers.get_xml_text(item.getElementsByTagName('link')[0])
 
         if not title or not url:
             logger.log("The XML returned from the FreshOnTV RSS feed is incomplete, this result is unusable", logger.ERROR)
